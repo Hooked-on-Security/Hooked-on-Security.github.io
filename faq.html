@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Hooked on Security</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --muted-text: #666666;
+            --bg-light: #f4f6f8;
+            --border-light: #d9e0e6;
+            --cat-about-bg:      #e8f0f5;
+            --cat-about-text:    #0A4C6A;
+            --cat-about-pill:    #b8d0e0;
+            --cat-scenario-bg:   #fff8e1;
+            --cat-scenario-text: #7a5c00;
+            --cat-scenario-pill: #ffe082;
+            --cat-security-bg:   #eaf4ee;
+            --cat-security-text: #1e5c34;
+            --cat-security-pill: #a3d4b2;
+        }
+
+ 
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid #eeeeee;
+            position: relative;
+            z-index: 100;
+            overflow: visible;
+        }
+
+        .logo {
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img { height: clamp(28px, 4vh, 36px); width: auto; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+     
+        main {
+            flex: 1;
+            width: 90%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2.5vh 0 2vh 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        section { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+        .section-title {
+            color: var(--main-blue);
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 0.6em;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: clamp(14px, 1.8vh, 17px);
+            color: var(--muted-text);
+            line-height: 1.5;
+            margin-bottom: 1.2vh;
+            flex-shrink: 0;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: var(--main-yellow);
+            border: none;
+            margin-bottom: 1.4vh;
+            flex-shrink: 0;
+        }
+
+   
+        .filter-tabs {
+            display: flex;
+            gap: 0.6vw;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .filter-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 99px;
+            border: 1.5px solid var(--border-light);
+            font: inherit;
+            font-size: clamp(12px, 1.45vh, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg-light);
+            color: var(--muted-text);
+            transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+        }
+
+        .filter-tab:hover { border-color: #aac4d0; color: var(--main-blue); }
+
+        .filter-tab.active[data-filter="all"] {
+            background: var(--main-blue); color: #fff;
+            border-color: var(--main-blue);
+            box-shadow: 0 2px 8px rgba(10,76,106,0.20);
+        }
+
+        .filter-tab.active[data-filter="about"] {
+            background: var(--cat-about-bg); color: var(--cat-about-text);
+            border-color: var(--cat-about-pill);
+            box-shadow: 0 2px 8px rgba(10,76,106,0.10);
+        }
+
+        .filter-tab.active[data-filter="scenario"] {
+            background: var(--cat-scenario-bg); color: var(--cat-scenario-text);
+            border-color: var(--cat-scenario-pill);
+            box-shadow: 0 2px 8px rgba(122,92,0,0.10);
+        }
+
+        .filter-tab.active[data-filter="security"] {
+            background: var(--cat-security-bg); color: var(--cat-security-text);
+            border-color: var(--cat-security-pill);
+            box-shadow: 0 2px 8px rgba(30,92,52,0.10);
+        }
+
+        .tab-count {
+            background: rgba(0,0,0,0.09);
+            border-radius: 99px;
+            padding: 1px 7px;
+            font-size: 0.86em;
+            font-weight: 700;
+        }
+
+       
+        .faq-tag {
+            flex-shrink: 0;
+            font-size: clamp(10px, 1.2vh, 11px);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+            white-space: nowrap;
+        }
+
+        .faq-tag[data-cat="about"]    { background: var(--cat-about-bg);    color: var(--cat-about-text);    border: 1px solid var(--cat-about-pill); }
+        .faq-tag[data-cat="scenario"] { background: var(--cat-scenario-bg); color: var(--cat-scenario-text); border: 1px solid var(--cat-scenario-pill); }
+        .faq-tag[data-cat="security"] { background: var(--cat-security-bg); color: var(--cat-security-text); border: 1px solid var(--cat-security-pill); }
+
+     
+        .faq-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            padding-right: 4px;
+        }
+
+        .faq-list::-webkit-scrollbar { width: 5px; }
+        .faq-list::-webkit-scrollbar-track { background: transparent; }
+        .faq-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+
+        .faq-item {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: border-color 0.2s;
+        }
+
+        .faq-item.open  { border-color: #a0c4d8; }
+        .faq-item.hidden { display: none; }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 1.3vh 1.6vw;
+            background: var(--bg-light);
+            border: none;
+            color: var(--main-blue);
+            font: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.2s;
+        }
+
+        .faq-item.open .faq-question { background-color: #eaf3f8; }
+
+        .faq-question-left {
+            display: flex;
+            align-items: center;
+            gap: 0.7vw;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .faq-question-text {
+            font-size: clamp(13px, 1.6vh, 17px);
+            font-weight: bold;
+            line-height: 1.35;
+        }
+
+        .faq-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10,76,106,0.08);
+            border-radius: 50%;
+            transition: background-color 0.2s, transform 0.25s ease;
+        }
+
+        .faq-icon svg {
+            width: 16px; height: 16px;
+            stroke: var(--main-blue);
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .faq-item.open .faq-icon { background: var(--main-blue); transform: rotate(45deg); }
+        .faq-item.open .faq-icon svg { stroke: #ffffff; }
+
+        .faq-answer {
+            display: none;
+            padding: 0 1.6vw 1.4vh 1.6vw;
+            background: #ffffff;
+            color: var(--main-text);
+            font-size: clamp(12px, 1.5vh, 15px);
+            line-height: 1.7;
+        }
+
+        .faq-item.open .faq-answer { display: block; }
+        .faq-answer p { max-width: 1200px; }
+
+        .no-results {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 4vh 0;
+            color: var(--muted-text);
+            font-size: clamp(13px, 1.6vh, 15px);
+        }
+
+        .no-results.visible { display: flex; }
+
+  
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/logo.png" alt="Hooked on Security Logo">
+            Hooked on Security
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Need help while training? Click any question to expand its answer. Use the filters below to browse by category.</p>
+            <hr class="divider">
+
+            <!-- Category filter tabs + expand/collapse all -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:1vw; flex-wrap:wrap; margin-bottom:1.4vh;">
+                <div class="filter-tabs" role="group" aria-label="Filter questions by category" style="margin-bottom:0;">
+                    <button class="filter-tab active" data-filter="all">All <span class="tab-count" id="count-all"></span></button>
+                    <button class="filter-tab" data-filter="about">About the Training <span class="tab-count" id="count-about"></span></button>
+                    <button class="filter-tab" data-filter="scenario">During Scenarios <span class="tab-count" id="count-scenario"></span></button>
+                    <button class="filter-tab" data-filter="security">Security Concepts <span class="tab-count" id="count-security"></span></button>
+                </div>
+                <button class="filter-tab" id="toggleAllBtn" onclick="toggleAll()">Expand All</button>
+            </div>
+
+            <div class="no-results" id="noResults" role="status">No questions in this category.</div>
+
+            <div class="faq-list" id="faqList">
+
+                <!-- ABOUT THE TRAINING -->
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">What is Hooked on Security?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Hooked on Security is an interactive phishing awareness training experience platform designed to help users recognize and respond accordingly to suspicious emails and messages.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">Does the training material use real Drexel emails?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>No. All content used in the scenarios is simulated and created for training purposes only.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">Why do I have to complete the modules in order?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Each section builds on the previous one to help reinforce skills before applying them in simulations.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">Is this training graded?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>No. The focus of this training is to raise awareness and reinforce learning, not scoring.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">Can I skip sections?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>No. The training is designed to be completed step by step to build understanding.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">What happens after I complete the training?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>After you've completed the training, you'll reinforce safe habits for recognizing suspicious messages in the future.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="about">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="about">About</span>
+                            <span class="faq-question-text">What is the main goal of this training?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>To help users recognize phishing attempts and make safer decisions before clicking, replying, or sharing information.</p></div>
+                </div>
+
+                <!-- DURING SCENARIOS -->
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">What happens if I click the wrong option during a scenario?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>You'll receive feedback explaining the risk and what the safer course of action would have been.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">Why are Outlook and Teams included in the training?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>These platforms reflect real communication environments where phishing attempts commonly occur.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">What is a knowledge check?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>A short set of questions designed to reinforce what you learned during the scenarios.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">Do I need to get every question right to continue?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>No. The goal is learning, not perfection. Feedback is provided to help you improve.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">Why is feedback given after each scenario?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Immediate feedback helps reinforce correct behavior and explain potential risks.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="scenario">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="scenario">Scenarios</span>
+                            <span class="faq-question-text">What if I miss a red flag in a message?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>The training will highlight what was missed and explain how to identify it next time.</p></div>
+                </div>
+
+                <!-- SECURITY CONCEPTS -->
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">What should I look for in a suspicious email?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Check the sender address for misspellings or unusual domains, look for urgent or threatening language, and be cautious of unexpected links or attachments. If anything feels off, verify through an official channel before acting.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">Are phishing attempts only received through email?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>No. Phishing can occur through messaging platforms, texts, and other communication tools.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">How do I know if a link is safe?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Hover over the link before clicking to preview the destination URL. Check that it starts with <strong>https://</strong>, matches the sender's organization, and has no subtle misspellings (e.g. "drexeI.edu" with a capital I instead of a lowercase l). When in doubt, go directly to the official website instead of clicking the link.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">What should I do if I'm unsure about a message?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Pause and verify it through a trusted or official channel before taking action.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">Why do phishing messages often feel urgent?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Attackers use urgency to pressure users into acting quickly without thinking.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">Can phishing messages look legitimate?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Yes. Many phishing attempts are designed to closely resemble real communications.</p></div>
+                </div>
+
+                <div class="faq-item" data-category="security">
+                    <button class="faq-question" type="button">
+                        <span class="faq-question-left">
+                            <span class="faq-tag" data-cat="security">Security</span>
+                            <span class="faq-question-text">How can phishing affect me or my organization?</span>
+                        </span>
+                        <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                    </button>
+                    <div class="faq-answer"><p>Phishing can lead to stolen information, compromised accounts, and significant security risks for both individuals and their organizations.</p></div>
+                </div>
+
+            </div><!-- /.faq-list -->
+        </section>
+    </main>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+    <script>
+        // Accordion
+        document.querySelectorAll(".faq-item").forEach(item => {
+            item.querySelector(".faq-question").addEventListener("click", () => {
+                item.classList.toggle("open");
+                updateToggleBtn();
+            });
+        });
+
+        // Toggle All
+        function getVisibleItems() {
+            return Array.from(document.querySelectorAll(".faq-item")).filter(i => !i.classList.contains("hidden"));
+        }
+
+        function updateToggleBtn() {
+            const visible = getVisibleItems();
+            const allOpen = visible.length > 0 && visible.every(i => i.classList.contains("open"));
+            document.getElementById("toggleAllBtn").textContent = allOpen ? "Collapse All" : "Expand All";
+        }
+
+        function toggleAll() {
+            const visible = getVisibleItems();
+            const allOpen = visible.every(i => i.classList.contains("open"));
+            visible.forEach(i => i.classList.toggle("open", !allOpen));
+            updateToggleBtn();
+        }
+
+        // Category filter
+        const allItems  = document.querySelectorAll(".faq-item");
+        const tabs      = document.querySelectorAll(".filter-tab[data-filter]");
+        const noResults = document.getElementById("noResults");
+
+        // Count per category and populate badges
+        const counts = { all: allItems.length, about: 0, scenario: 0, security: 0 };
+        allItems.forEach(item => counts[item.dataset.category]++);
+        document.getElementById("count-all").textContent      = counts.all;
+        document.getElementById("count-about").textContent    = counts.about;
+        document.getElementById("count-scenario").textContent = counts.scenario;
+        document.getElementById("count-security").textContent = counts.security;
+
+        function applyFilter(filter) {
+            let visible = 0;
+            allItems.forEach(item => {
+                const show = filter === "all" || item.dataset.category === filter;
+                item.classList.toggle("hidden", !show);
+                if (show) visible++;
+            });
+            noResults.classList.toggle("visible", visible === 0);
+            updateToggleBtn();
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                applyFilter(tab.dataset.filter);
+            });
+        });
+    </script>
+</body>
+</html>
+

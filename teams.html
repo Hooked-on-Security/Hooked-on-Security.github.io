@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams Scenario- Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --border-light: #eeeeee;
+            --banner-blue: #165f80;
+            --muted-text: #666666;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ── BANNER ── */
+        .banner {
+            flex-shrink: 0;
+            background: var(--banner-blue);
+            color: #ffffff;
+            text-align: center;
+            min-height: 20vh;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner h1 {
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 1.2vh;
+        }
+
+        .banner p {
+            font-size: clamp(15px, 2vh, 18px);
+            line-height: 1.6;
+            max-width:1000px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 75%;
+            height: 8px;
+            opacity: 0.7;
+            flex-shrink: 0;
+            background: linear-gradient(to right, var(--main-blue), var(--main-yellow));
+        }
+
+        /* ── Main Teams ── */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .scenario-2 {
+            padding: 6vh;
+            display:flex;
+            justify-content: center;
+        }
+
+        .teams-wrapper {
+            background-color: #f6f5f5;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 1300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .teams-title {
+            color: #0A4C6A;
+            font-size: clamp(26px, 2.0vh, 30px);
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .teams-action {
+            font-size: clamp(16px, 2.0vh, 18px);
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .teams-block {
+            background-color: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow-y: hidden;
+            overflow-x: auto;
+        }
+
+        .teams-header {
+            background-color: #5036C5;
+            color: #ffffff;
+            padding: 8px 16px;
+            font-size: clamp(13px, 2.0vh, 15px);
+            font-weight: bold;
+            min-width: 600px;
+        }
+
+        .teams-body {
+            display: flex;
+            min-height: 480px;
+            min-width: 600px;
+        }
+
+        .teams-sidebar {
+            width: 280px;
+            background-color: #dbdbdb;
+            padding: 24px 18px;
+            border-right: 1px solid rgba(0, 0, 0, 0.3);
+            font-size: clamp(15px, 2.0vh, 16px);
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .source-context {
+            background-color: #FFEAC4;
+            border: 1px solid #F8A95A;
+            padding: 16px;
+            border-radius: 12px;
+            color: #825F14;
+            line-height: 1.5;
+        }
+
+        .teams-chat {
+            display: flex;
+            flex: 1;
+            padding: 45px;
+            gap: 34px;
+        }
+
+        .chat-initial {
+            display: flex;
+            width: 42px;
+            height: 42px;
+            background-color: #5036C5;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .chat-bubble {
+            background-color: #d9d9d9;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            padding: 24px 24px 24px 40px;
+            max-width: 800px;
+            flex: 1;
+            line-height: 1.5;
+            font-size: clamp(15px, 2.0vh, 16px);
+        }
+
+        .chat-sender {
+            font-weight: bold;
+            margin-bottom: 24px;
+            font-size: clamp(15px, 2.0vh, 16px);
+        }
+
+        .chat-bubble p.tab {
+            margin-left: 45px;
+            margin-top: 14px;
+        }
+
+        .chat-bubble a {
+            color: #2600FF;
+            text-decoration: underline;
+            text-underline-offset: 5px;
+        }
+
+        .link-footer {
+            margin-left: 45px;
+            font-style: italic;
+            font-size: clamp(12px, 2.0vh, 13px);
+        }
+
+        /* ── Hover Iteams ── */
+        .hover-item {
+            display: inline-block;
+            border-radius: 7px;
+        }
+
+        .hover-item:hover {
+            background-color: rgba(194, 194, 194, 0.5);
+            outline: 2px solid #424242;
+            cursor: pointer;
+        }
+
+        .hover-item.clicked {
+            background-color: rgba(194, 194, 194, 0.5);
+            outline: 2px solid #424242;
+        }
+
+        .redflag-item {
+            display: inline-flex;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .redflag-item.clicked {
+            background-color: rgba(250, 189, 228, 0.5);
+            outline: 2px solid rgba(251,0,0,0.7);
+            padding: 0px 6px;
+        }
+
+        .redflag-item.clicked::before {
+            content: "";
+            width: 20px;
+            height: 16px;
+            background-image: url("./assets/redflag.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+            transform: translate(3px, 2.5px);
+        }
+
+        /* ── Scene4 Buttons ── */
+        .scene4-btns {
+            display: flex;
+            gap: 20px;
+            padding: 93px 20px 0 20px;
+        }
+
+        .scene4-btns img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .button1 {
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 12px;
+            padding: 6px 18px;
+            font-size: clamp(12px, 1.8vh, 14px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button1:hover {
+            background-color: #f3f4f6;
+        }
+
+        .button2 {
+            background-color: #ffffff;
+            border: 1px solid #0247C8;
+            color: #0247C8;
+            border-radius: 12px;
+            padding: 6px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            gap: 8px;
+        }
+
+        .button2:hover {
+            background-color: #f3f4f6;
+        }
+
+        .button3 {
+            background-color: #ffffff;
+            border: 1px solid #FF0000;
+            color: #FF0000;
+            border-radius: 12px;
+            padding: 6px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            gap: 8px;
+        }
+
+        .button3:hover {
+            background-color: #f3f4f6;
+        }
+
+        .disclaimer {
+            background-color: #f6e59d;
+            font-size: clamp(13px, 1.8vh, 15px);
+            color: #4a4a4a;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            text-align: left;
+            padding: 0.6vh 5%;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+        /* ── POPUP ── */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-box {
+            background-color: #ffffff;
+            max-width: 550px;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: left;
+        }
+
+        .popup-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #BABABA;
+        }
+
+        .popup-title h3 {
+            font-weight: bold;
+            font-size: clamp(15px, 2vh, 18px);
+            flex-grow: 1;
+        }
+
+        .popup-title img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .popup-close-btn {
+            background-color: #ffffff;
+            border: 1px solid #A6A6A6;
+            border-radius: 5px;
+            padding: 6px 17px;
+            font-weight: bold;
+            font-size: clamp(12px, 1.8vh, 14px);
+            cursor: pointer;
+        }
+
+        .popup-close-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .popup-box p {
+            margin-top: -15px;
+            margin-bottom: 50px;
+            line-height: 1.6;
+            font-weight: bold;
+        }
+
+        .popup-btn {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            padding: 10px 32px;
+            font-size: clamp(12px, 1.8vh, 14px);
+            border-radius: 5px;
+            border: none;
+            float: right;
+            cursor: pointer;
+        }
+
+        .popup-btn:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div> 
+    </header>
+
+    <main>
+        <section class="banner">
+            <h1>Interactive Phishing Scenario</h1>
+            <p>Work through realistic Outlook and Teams situations, identify red flags, and practice making safer security decisions.</p>
+        </section>
+
+        <div class="progress-bar"></div>
+        
+        <section class="scenario-2" id="teams">
+            <div class="teams-wrapper" id="scene1">
+                <h2 class="teams-title">Department Coordination Meeting, Teams Chat</h2>
+                <p class="teams-action">Inspect the sender's name and address</p>
+
+                <div class="teams-block">
+                    <div class="teams-header">Microsoft Teams</div>
+
+                    <div class="teams-body">
+                        <div class="teams-sidebar">
+                            <div class="sidebar-section">
+                                <strong>Meeting</strong>
+                                <p>Department Coordination Meeting</p>
+                            </div>
+
+                            <div class="sidebar-section">
+                                <strong>Organizer</strong>
+                                <p class="hover-item" id="organizer" onclick="scenario2()">Jane Doe - Administrative Support<br>jane.doe@drexel.com</p>
+                            </div>
+
+                            <div class="sidebar-section">
+                                <strong>Attendees</strong>
+                                <p>Faculty Distribution List</p>
+                            </div>
+
+                            <div class="source-context">
+                                <strong>Source context:<br>the Teams message appears after a meeting invite and active chat thread.</strong>
+                            </div>
+                        </div>
+
+                        <div class="teams-chat">
+                            <div class="chat-initial">JD</div>
+
+                            <div class="chat-bubble">
+                                <div class="chat-sender">Jane Doe</div>
+
+                                <p>Thanks to everyone who joined today’s meeting.</p>
+                                <p>For those who couldn’t attend, we’re sharing the staff bios referenced so you can review them when you have time.</p>
+                                <p>You can access them here:</p>
+                                <p class="tab"><a href="#">Staff_Bios_Updated.docx</a></p>
+                                <p class="link-footer">Shared after meeting by Jane Doe</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This training contains simulated phishing scenarios created for educational purposes and is not affiliated with or endorsed by Drexel University.
+    </div>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+    <div class="popup-overlay">
+        <div class="popup-box">
+            <div class="popup-title">
+                <img id="popup-icon" src="" alt="popup icon">
+                <h3 id="popup-title">title</h3>
+                <button class="popup-close-btn" id="popup-close">Close</button>
+            </div>
+            <p id="popup-message">message</p>
+            <button type="button" class="popup-btn" id="popup-btn">text</button>
+        </div>
+    </div>
+        
+    <script src="./teams.js"></script>
+    <script src="session.js"></script>
+
+</body>
+</html>

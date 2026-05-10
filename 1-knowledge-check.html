@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Check 1 - Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #f4f6f8;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --border-light: #eeeeee;
+            --banner-blue: #165f80;
+            --muted-text: #666666;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+            background-color: #ffffff;
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a, #complete-btn, #popup-btn {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ── BANNER ── */
+        .banner {
+            flex-shrink: 0;
+            background: var(--banner-blue);
+            color: #ffffff;
+            text-align: center;
+            min-height: 20vh;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner h1 {
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 1.2vh;
+        }
+
+        .banner p {
+            font-size: clamp(15px, 2vh, 18px);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 50%;
+            height: 8px;
+            opacity: 0.7;
+            flex-shrink: 0;
+            background: linear-gradient(to right, var(--main-blue), var(--main-yellow));
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* ── QUIZ ── */
+        .quiz-wrapper {
+            background-color: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            width: 80%;
+            max-width: 900px;
+            align-self: center;
+            margin: 40px 0;
+            padding: 25px 40px;
+        }
+
+        .quiz-title {
+            color: var(--main-blue);
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: clamp(24px, 3.5vh, 30px);
+        }
+
+        .quiz-block {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e0e4e8;
+        }
+
+        .quiz-block h3 {
+            color: var(--main-blue);
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .quiz-block p {
+            color: var(--muted-text);
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+            padding: 12px 17px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-block p:hover {
+            background-color: #e9f2f9;
+            cursor: pointer;
+        }
+
+        .quiz-block p.selected {
+            background-color: #e9f2f9;
+            border-color: var(--main-blue);
+            color: var(--main-blue);
+            font-weight: bold;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            padding-top: 10px;
+            margin-bottom: 12px;
+        }
+
+        .disclaimer {
+            background-color: #f6e59d;
+            font-size: clamp(13px, 1.8vh, 15px);
+            color: #4a4a4a;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            text-align: left;
+            padding: 0.6vh 5%;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+        /* ── POPUP ── */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-box {
+            background-color: #ffffff;
+            max-width: 400px;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .popup-box h3 {
+            color: var(--main-blue);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .popup-box p {
+            color: var(--muted-text);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div> 
+    </header>
+
+    <main>
+        <section class="banner">
+            <h1>Interactive Phishing Scenario</h1>
+            <p>Work through realistic Outlook and Teams situations, identify red flags, and practice making safer security decisions.</p>
+        </section>
+
+        <div class="progress-bar"></div>
+        
+        <div class="quiz-wrapper">
+            <div class="quiz-title">Knowledge Check 1</div>
+
+                <div class="quiz-block" data-multi-select="false">
+                    <h3>Q1. What is phishing?</h3>
+                    <p onclick="toggleSelected(this)" data-answer="false">A. A type of computer virus that attacks your system</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">B. When someone pretends to be trusted to steal information or credentials</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">C. Spam email that clogs your inbox</p>
+                </div>
+
+                <div class="quiz-block" data-multi-select="true">
+                    <h3>Q2. Select all the red flags of a phishing email.</h3>
+                    <p onclick="toggleSelected(this)" data-answer="true">A. Urgency and pressure to act quickly</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">B. Suspicious sender email address</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">C. Link destination doesn't match the organization</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">D. Professional formatting and grammar</p>
+                </div>
+
+                <div class="quiz-block" data-multi-select="false">
+                    <h3>Q3. What's the best first action when you receive a suspicious email?</h3>
+                    <p onclick="toggleSelected(this)" data-answer="false">A. Click the link to see where it goes</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">B. Delete it immediately</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">C. Pause and inspect the sender and links before taking action</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">D. Reply to ask if it's legitimate</p>
+                </div>
+
+                <div class="quiz-block" data-multi-select="true">
+                    <h3>Q4. What was the issue you noticed first? (Multi-select)</h3>
+                    <p onclick="toggleSelected(this)" data-answer="true">A. Incorrect Drexel email domain</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">B. Unexpected request involving scheduling</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">C. No suspicious indicators</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">D. Link requiring sign-up outside normal workflow</p>
+                </div>
+
+                <div class="quiz-block" data-multi-select="false">
+                    <h3>Q5. Which action best reduces risk before interacting with the email?</h3>
+                    <p onclick="toggleSelected(this)" data-answer="false">A. Skim quickly and respond later</p>
+                    <p onclick="toggleSelected(this)" data-answer="true">B. Verify using Drexel directory or known contact</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">C. Forward to colleagues</p>
+                    <p onclick="toggleSelected(this)" data-answer="false">D. Ignore it</p>
+                </div>
+            
+                <div class="btn-wrapper">
+                    <button id="complete-btn" class="btn-active" data-next-page="scenario2-landing.html" onclick="kc1()">Complete</button>
+                </div>
+        </div>
+    </main>
+
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This training contains simulated phishing scenarios created for educational purposes and is not affiliated with or endorsed by Drexel University.
+    </div>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+    <div class="popup-overlay">
+        <div class="popup-box">
+            <h3>title</h3>
+            <p>message</p>
+            <button id="popup-btn" class="btn-active">OK</button>
+        </div>
+    </div>
+
+    <script src="./knowledge-check.js"></script>
+    <script src="./session.js"></script>
+
+</body>
+</html>

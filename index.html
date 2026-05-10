@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Homepage - Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --muted-text: #666666;
+            --bg-gray: #f4f6f8;
+            --border-light: #e5e7eb;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            overflow-y: auto;
+        }
+
+        .banner {
+            background: linear-gradient(#0a4c6a, #0d6389);
+            color: #ffffff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /*left and right*/
+            justify-content: center; /*up and down*/
+            padding: 10vh 5%;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .banner h1 {
+            font-size: clamp(28px, 4.5vh, 48px);
+            margin-bottom: 2vh;
+            font-weight: bold;
+        }
+
+        .banner p {
+            font-size: clamp(16px, 2.2vh, 20px);
+            margin-bottom: 5vh;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+            font-size: clamp(14px, 2vh, 18px);
+            padding: 2.5vh 2.0vw;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #e6b800;
+            transform: translateY(-2px);
+        }
+
+        .bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -15%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-90vh);
+                opacity: 0;
+            }
+        }
+
+        .features-wrapper{
+            background-color: var(--bg-gray);
+            margin: 5vh auto;
+            padding: 5vh 4vw;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .features-wrapper h2 {
+            color: var(--main-blue);
+            font-size: clamp(22px, 3vh, 32px);
+            margin-bottom: 4vh;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2vw;
+            width: 100%;
+        }
+
+        .feature-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 3vh 2vw;
+            box-shadow: 0 4px 6px rgba(0, 0, 1, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .icon-box {
+            background-color: var(--main-blue);
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2vh;
+        }
+
+        .icon-box img {
+            max-width: 60%;
+            height: auto;
+        }
+
+        .feature-card h3 {
+            color: var(--main-blue);
+            font-size: clamp(16px, 2.2vh, 18px);
+            margin-bottom: 1.5vh;
+        }
+
+        .feature-card p {
+            color: var(--muted-text);
+            font-size: clamp(14px, 1.8vh, 16px);
+            line-height: 1.6;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html" class="btn-active">Home</a>
+            <div class="dropdown">
+                <a href="training.html">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div> 
+    </header>
+
+    <main>
+        <section class="banner">
+            <div class="bubbles"></div>
+
+            <div class="banner-content">
+                <h1>Don't Get Hooked by Hidden Threats</h1>
+                <p>Interactive phishing defense training for everyday users.</p>
+                <a href="training.html" class="cta-button">Start Training</a>
+            </div>
+        </section>
+
+        <section class="features-wrapper">
+            <h2>Why This Training Works</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="./assets/shield.png" alt="shield img">
+                    </div>
+                    <h3>Real-world Scenarios</h3>
+                    <p>Experience authentic phishing attacks in a safe environment. Learn to identify threats before they become real problems.</p>
+                </div>
+            
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="./assets/lightning.png" alt="lightning img">
+                    </div>
+                    <h3>Instant Feedback</h3>
+                    <p>Get immediate, actionable feedback on your decisions. Understand what you missed and how to spot red flags faster.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="./assets/target.png" alt="target img">
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Track your improvement over time with visual progress indicators that highlight strengths and areas for improvement.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="./assets/adjust.png" alt="adjust img">
+                    </div>
+                    <h3>Adaptive Difficulty</h3>
+                    <p>Follow a step-by-step explanation of your choices. Understand why a decision was risky, which red flags you missed, and how to make safer judgments next time.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+<script src="homebubbles.js"></script>
+</body>
+</html>

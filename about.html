@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --muted-text: #666666;
+            --bg-light: #f8f9fa;
+            --border-light: #eeeeee;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 158%;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        main {
+            flex: 1;
+            width: 90%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2vh 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        section { margin-bottom: 0; }
+
+        .section-title {
+            color: var(--main-blue);
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 1.5vh;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: var(--main-yellow);
+            border: none;
+            margin-bottom: 2.5vh;
+        }
+
+        .about-text {
+            font-size: clamp(16px, 2.2vh, 20px);
+            line-height: 1.6;
+            margin-bottom: 3vh;
+            color: var(--main-text);
+        }
+
+        .why-it-matters h3 {
+            font-size: clamp(18px, 2.5vh, 22px);
+            color: var(--main-text);
+            margin-bottom: 1.5vh;
+        }
+
+        .why-it-matters ul {
+            list-style-type: disc;
+            padding-left: 2vw;
+        }
+
+        .why-it-matters li {
+            font-size: clamp(15px, 2vh, 18px);
+            line-height: 1.6;
+            margin-bottom: 1vh;
+            color: var(--main-text);
+        }
+
+        .team-container {
+            display: flex;
+            gap: 1.5vw;
+            justify-content: space-between;
+        }
+
+        .team-card {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-light);
+            padding: 2.5vh 1.5vw;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .team-card .name {
+            color: var(--main-blue);
+            font-size: clamp(15px, 2vh, 18px);
+            font-weight: bold;
+            margin-bottom: 0.3vh;
+        }
+
+        .team-card .role {
+            color: var(--muted-text);
+            font-size: clamp(13px, 1.6vh, 15px);
+            line-height: 1.3;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html" class="btn-active">About Us</a>
+        </div> 
+    </header>
+
+    <main>
+        <section>
+            <h2 class="section-title">About the Project</h2>
+            <hr class="divider">
+
+            <p class="about-text">
+                <strong>Hooked on Security</strong> is a web-based phishing training platform designed specifically for Drexel University faculty members. Our platform provides a safe, interactive environment where faculty can practice identifying phishing attempts without real-world risks.
+            </p>
+
+            <div class="why-it-matters">
+                <h3>Why It Matters?</h3>
+                <ul>
+                    <li><strong>Proactive Defense:</strong> Shift from reactive measures to proactive education.</li>
+                    <li><strong>Realistic Scenarios:</strong> Simulations based on actual phishing attacks.</li>
+                    <li><strong>Instant Feedback:</strong> Immediate analysis of user actions.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Meet the Team</h2>
+            <hr class="divider">
+
+            <div class="team-container">
+                <div class="team-card">
+                    <div class="name">Aliscia Scott</div>
+                    <div class="role">QA Analyst</div>
+                </div>
+
+                <div class="team-card">
+                    <div class="name">Bryce Wood</div>
+                    <div class="role">Team Lead</div>
+                </div>
+
+                <div class="team-card">
+                    <div class="name">Chaeyoon Song</div>
+                    <div class="role">Developer</div>
+                </div>
+
+                <div class="team-card">
+                    <div class="name">Eddy Kim</div>
+                    <div class="role">UI/UX Coordinator</div>
+                </div>
+
+                <div class="team-card">
+                    <div class="name">Ernstha Jovin</div>
+                    <div class="role">Content & Scenario<br>Owner</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+</body>
+</html>

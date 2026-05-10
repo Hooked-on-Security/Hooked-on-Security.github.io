@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scenario 2 - Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --border-light: #eeeeee;
+            --banner-blue: #165f80;
+            --muted-text: #666666;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a, #start-btn {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ── BANNER ── */
+        .banner {
+            flex-shrink: 0;
+            background: var(--banner-blue);
+            color: #ffffff;
+            text-align: center;
+            min-height: 20vh;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner h1 {
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 1.2vh;
+        }
+
+        .banner p {
+            font-size: clamp(15px, 2vh, 18px);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 64%;
+            height: 8px;
+            opacity: 0.7;
+            background: linear-gradient(to right, var(--main-blue), var(--main-yellow));
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content-header img {
+            height: clamp(75px, 10vh, 95px);
+            width: auto;
+            margin-top: 8vh;
+        }
+
+        .content-header h1 {
+            color: var(--main-blue);
+            font-size: clamp(35px, 3.6vh, 40px);
+            margin-top: 17px;
+            margin-bottom: 10px;
+        }
+
+        .content-header p {
+            color: var(--muted-text);
+            font-size: clamp(17px, 1.6vh, 20px);
+            margin-bottom: 5px;
+            max-width: 1200px;
+            line-height: 1.4;
+        }
+
+        .content-block {
+            background-color: #f4f6f8;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            width: 80%;
+            max-width: 1000px;
+            align-self: center;
+            margin: 20px 0;
+            padding: 25px 40px;
+        }
+
+        .content-sub {
+            color: var(--muted-text);
+            font-size: clamp(15px, 1.6vh, 18px);
+            line-height: 2.0;
+        }
+
+        .alert {
+            background-color: #eaf5f8;
+            font-weight: bold;
+            color: var(--main-blue);
+            border-radius: 6px;
+            margin-top: 14px;
+            padding: 14px 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .alert img {
+            height: clamp(15px, 2vh, 30px);
+            width: auto;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            
+        }
+
+        .disclaimer {
+            background-color: #f6e59d;
+            font-size: clamp(13px, 1.8vh, 15px);
+            color: #4a4a4a;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            text-align: left;
+            padding: 0.6vh 5%;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div> 
+    </header>
+
+    <section class="banner">
+        <h1>Interactive Phishing Scenario</h1>
+        <p>Work through realistic Outlook and Teams situations, identify red flags, and practice making safer security decisions.</p>
+    </section>
+
+    <div class="progress-bar"></div>
+
+    <main>
+        <div class="content-header">
+            <img src="./assets/teams.png" alt="Outlook Scenario">
+            <h1>Microsoft Teams Phishing Simulation</h1>
+         </div>
+
+         <div class="content-block">
+            <div class="content-sub">
+                <p><strong>Goal behaviors: </strong>Pause before opening shared files, verify sender identity even when internal, inspect SharePoint or Teams links, and report or verify instead of clicking.</p>
+            </div>
+        </div>
+
+        <div class="btn-wrapper">
+            <button id="start-btn" class="btn-active" onclick="window.location.href='./teams.html'">Start Scenario</button>
+        </div>
+    </main>
+
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This training contains simulated phishing scenarios created for educational purposes and is not affiliated with or endorsed by Drexel University.
+    </div>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Red Flags - Hooked on Security</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --muted-text: #666666;
+            --bg-light: #f4f6f8;
+            --border-light: #d9e0e6;
+            --flip-back-bg: #0A4C6A;
+            --flip-back-text: #ffffff;
+        }
+
+      
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .logo {
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            height: clamp(28px, 4vh, 36px);
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        
+        main {
+            flex: 1;
+            width: 90%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2.5vh 0 2vh 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        .cards-grid-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        section { margin-bottom: 0; }
+
+        .section-title {
+            color: var(--main-blue);
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 0.6em;
+        }
+
+        .section-subtitle {
+            font-size: clamp(14px, 1.8vh, 17px);
+            color: var(--muted-text);
+            line-height: 1.5;
+            margin-bottom: 1vh;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: var(--main-yellow);
+            border: none;
+            margin-bottom: 1.4vh;
+        }
+
+       
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.4vh;
+            gap: 1vw;
+            flex-wrap: wrap;
+        }
+
+        .flip-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: clamp(12px, 1.5vh, 14px);
+            color: var(--muted-text);
+        }
+
+        .flip-hint svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--muted-text);
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .counter-reset {
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+        }
+
+        .viewed-counter {
+            font-size: clamp(12px, 1.5vh, 14px);
+            font-weight: 600;
+            color: var(--main-blue);
+            background: #e8f0f5;
+            border: 1px solid #c2d5e0;
+            border-radius: 99px;
+            padding: 4px 14px;
+            white-space: nowrap;
+        }
+
+        .viewed-counter span {
+            color: var(--main-blue);
+        }
+
+        .btn-reset {
+            background: none;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 5px 14px;
+            font-size: clamp(12px, 1.5vh, 13px);
+            font-weight: 600;
+            color: var(--muted-text);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-reset:hover {
+            background: #fdf3d0;
+            border-color: var(--main-yellow);
+            color: var(--main-blue);
+        }
+
+     
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.6vh 2vw;
+        }
+
+        .flip-card {
+            perspective: 1200px;
+            height: clamp(110px, 14vh, 150px);
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.55s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+
+      
+        .flip-front {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-light);
+            padding: 0 1.8vw;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1.4vw;
+        }
+
+      
+        .flip-back {
+            background: linear-gradient(135deg, #0d5a7a 0%, #0A4C6A 100%);
+            border: 1px solid #0a3d56;
+            padding: 1.5vh 2vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: rotateY(180deg);
+        }
+
+        .flip-back::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 10px;
+            background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+       
+        .flip-card.viewed .flip-front {
+            border-color: #1a7aab;
+            box-shadow: 0 0 0 2px rgba(10, 76, 106, 0.18), 0 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .icon-wrap {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(44px, 6vh, 64px);
+            height: clamp(44px, 6vh, 64px);
+            background-color: rgba(10, 76, 106, 0.08);
+            border-radius: 50%;
+        }
+
+        .icon-wrap svg {
+            width: clamp(24px, 3.2vh, 34px);
+            height: clamp(24px, 3.2vh, 34px);
+            stroke: var(--main-blue);
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .front-title {
+            color: var(--main-blue);
+            font-size: clamp(15px, 1.9vh, 19px);
+            font-weight: bold;
+            line-height: 1.35;
+        }
+
+        .back-text {
+            color: #ffffff;
+            font-size: clamp(12px, 1.55vh, 15px);
+            line-height: 1.65;
+            max-width: 92%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/logo.png" alt="Hooked on Security Logo">
+            Hooked on Security
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2 class="section-title">Phishing Red Flags</h2>
+            <p class="section-subtitle">Use this page as a fast reference before and during the training scenarios. These are the most common warning signs found in phishing emails and messages.</p>
+            <hr class="divider">
+
+            <!-- Hint + controls -->
+            <div class="controls-row">
+                <div class="flip-hint">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10 17 15 12 10 7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    Click any card to reveal its explanation. Click again to flip back.
+                </div>
+                <div class="counter-reset">
+                    <div class="viewed-counter" id="viewedCounter">0 / 8 viewed</div>
+                    <button class="btn-reset" id="resetBtn" onclick="resetAll()">Reset All</button>
+                </div>
+            </div>
+
+            <div class="cards-grid-wrap">
+            <div class="cards-grid" id="cardsGrid">
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 9v4"></path>
+                                    <path d="M12 17h.01"></path>
+                                    <path d="M10.4 3.9 2.2 18a1.8 1.8 0 0 0 1.6 2.7h16.4a1.8 1.8 0 0 0 1.6-2.7L13.6 3.9a1.8 1.8 0 0 0-3.2 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Urgent or Threatening Language</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Phishing attempts often create pressure by using urgent deadlines, threats, or fear-based language to push quick decisions before you have time to verify the message.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 3h7l5 5v13H7z"></path>
+                                    <path d="M14 3v5h5"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Unexpected Links or Attachments</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Be cautious of unfamiliar links or unexpected files. Phishing attempts often try to get you to click or download quickly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                                    <path d="M3 8l9 6 9-6"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Suspicious Sender Addresses</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Attackers imitate legitimate senders. Check for misspelled domains, mismatched names, and unexpected external contacts.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Messages That Feel Unusual</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Poor grammar, unusual tone, unexpected requests, or inconsistent branding can signal phishing. Trust your instincts.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="4" y="11" width="16" height="9" rx="2"></rect>
+                                    <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Requests for Personal Information</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Phishing messages often ask for passwords, login codes, financial details, or other sensitive data. Legitimate organizations rarely request this through email or chat. Verify through an official channel before sharing anything.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 4l16 8-7 2-2 7-7-17z"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Before You Click</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Pause and inspect links, attachments, and sender details. Hover over URLs to preview where they lead, confirm the source, and ask yourself if the request makes sense.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                                    <path d="M8 21h8"></path>
+                                    <path d="M12 17v4"></path>
+                                    <path d="M9 11l2 2 4-4"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Spoofed Websites &amp; Login Pages</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Fake websites mimic real ones to steal your credentials. Always check the URL carefully for subtle misspellings, extra characters, or wrong domains before entering any login information.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" tabindex="0">
+                    <div class="flip-card-inner">
+                        <div class="flip-face flip-front">
+                            <div class="icon-wrap">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
+                            <div class="front-title">Unusual Account Activity Alerts</div>
+                        </div>
+                        <div class="flip-face flip-back">
+                            <div class="back-text">
+                                Emails warning of suspicious logins or locked accounts are a common phishing tactic. Do not click links in these messages - go directly to the official website or contact IT support to verify.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /.cards-grid -->
+            </div><!-- /.cards-grid-wrap -->
+        </section>
+    </main>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+    <script>
+        const flipCards = document.querySelectorAll(".flip-card");
+        const counterEl = document.getElementById("viewedCounter");
+        const TOTAL = flipCards.length;
+        let viewedSet = new Set();
+
+        function updateCounter() {
+            counterEl.textContent = viewedSet.size + ' / ' + TOTAL + ' viewed';
+        }
+
+        flipCards.forEach((card, idx) => {
+            card.addEventListener("click", function () {
+                card.classList.toggle("is-flipped");
+                if (card.classList.contains("is-flipped")) {
+                    card.classList.add("viewed");
+                    viewedSet.add(idx);
+                }
+                updateCounter();
+            });
+
+            card.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    card.classList.toggle("is-flipped");
+                    if (card.classList.contains("is-flipped")) {
+                        card.classList.add("viewed");
+                        viewedSet.add(idx);
+                    }
+                    updateCounter();
+                }
+            });
+        });
+
+        function resetAll() {
+            flipCards.forEach(card => {
+                card.classList.remove("is-flipped", "viewed");
+            });
+            viewedSet.clear();
+            updateCounter();
+        }
+    </script>
+</body>
+</html>

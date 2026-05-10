@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training - Hooked on Security</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: sans-serif;
+    color: #333;
+    background-color: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s;
+}
+
+:root {
+    --main-blue: #0A4C6A;
+    --banner-blue: #165f80;
+    --main-yellow: #ffcc00;
+    --main-text: #333333;
+    --muted-text: #666666;
+    --bg-light: #f4f6f8;
+    --border-light: #d9e0e6;
+    --page-gray: #efefef;
+}
+
+header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2vh 5%;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.logo {
+    font-size: clamp(20px, 2.5vh, 24px);
+    font-weight: bold;
+    color: var(--main-blue);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    height: clamp(28px, 4vh, 36px);
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.3vw;
+    align-items: center;
+    font-weight: 500;
+    color: var(--main-blue);
+    font-size: clamp(14px, 1.8vh, 16px);
+}
+
+.nav-links a {
+    padding: 1vh 1.0vw;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.nav-links a:hover { opacity: 0.7; }
+
+.btn-active {
+    background-color: var(--main-yellow);
+    color: var(--main-blue);
+    font-weight: bold;
+}
+
+.btn-active:hover {
+    background-color: #e6b800;
+    opacity: 1 !important;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 8px;
+    min-width: 220px;
+    padding: 8px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    z-index: 200;
+}
+
+.dropdown-content a {
+    color: var(--main-blue);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: clamp(14px, 1.8vh, 16px);
+    display: block;
+    margin-bottom: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--main-yellow);
+    font-weight: bold;
+    opacity: 1 !important;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.banner {
+    flex-shrink: 0;
+    background: var(--banner-blue);
+    color: #ffffff;
+    text-align: center;
+    padding: 4vh 5%;
+}
+
+.banner h1 {
+    font-size: clamp(24px, 3.5vh, 32px);
+    margin-bottom: 1.2vh;
+}
+
+.banner p {
+    font-size: clamp(15px, 2vh, 18px);
+    line-height: 1.6;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+main {
+    flex: 1;
+    width: 90%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 2vh 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2vh;
+}
+
+
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2vh 1.8vw;
+    width: 100%;
+}
+
+.card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 8vh 1.8vw;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+.step-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--main-blue);
+    color: #fff;
+    font-size: clamp(10px, 1.3vh, 12px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 99px;
+    white-space: nowrap;
+}
+
+
+.card img {
+    height: clamp(42px, 8vh, 58px);
+    width: auto;
+    margin-bottom: 2vh;
+}
+
+.card h3 {
+    color: var(--main-blue);
+    font-size: clamp(17px, 2.6vh, 22px);
+    font-weight: bold;
+    margin-bottom: 1.5vh;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 2.5em;
+}
+
+.card p {
+    color: var(--muted-text);
+    font-size: clamp(13px, 2vh, 16px);
+    line-height: 1.6;
+    margin-bottom: 2.5vh;
+    max-width: 270px;
+    text-align: center;
+    flex: 1;
+}
+
+.card button {
+    background: var(--main-yellow);
+    border: none;
+    padding: 1.5vh 1.4vw;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+    font-size: clamp(13px, 1.6vh, 15px);
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.card button:hover {
+    background: #e6b800;
+}
+
+footer {
+    flex-shrink: 0;
+    background-color: var(--main-blue);
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    padding: 2vh 5%;
+    font-size: clamp(13px, 1.8vh, 15px);
+}
+
+.footer-links {
+    display: flex;
+    gap: 2vw;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <img src="assets/logo.png" alt="Hooked on Security Logo">
+        Hooked on Security
+    </div>
+
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <div class="dropdown">
+            <a href="training.html" class="btn-active">Training</a>
+            <div class="dropdown-content">
+                <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                <a href="faq.html">FAQ</a>
+            </div>
+        </div>
+        <a href="feedback.html">Feedback</a>
+        <a href="about.html">About Us</a>
+    </div>
+</header>
+
+<section class="banner">
+    <h1>Phishing Awareness Training</h1>
+    <p>
+        Learn how to identify and prevent phishing attacks. Enhance your cybersecurity skills through
+        interactive scenarios and real-world examples.
+    </p>
+</section>
+
+<main>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="step-badge">Learn</div>
+            <img src="assets/monitor.png" alt="Interactive Scenario">
+            <h3>Interactive Scenarios</h3>
+            <p>
+                Practice identifying phishing attempts in realistic simulations.
+                Test your skills with interactive email and message scenarios.
+            </p>
+            <button onclick="location.href='mini-lesson.html'">Start Training</button>
+        </div>
+
+        <div class="card">
+            <div class="step-badge">Reference</div>
+            <img src="assets/flag.png" alt="Red Flags">
+            <h3>Phishing Red Flags</h3>
+            <p>
+                Learn to recognize red flags in suspicious emails, links, and messages.
+                Master the art of identifying social engineering tactics.
+            </p>
+            <button onclick="location.href='phishing-red-flags.html'">Learn More</button>
+        </div>
+
+        <div class="card">
+            <div class="step-badge">Support</div>
+            <img src="assets/question.png" alt="FAQ">
+            <h3>FAQ</h3>
+            <p>
+                Find guidance throughout the training experience. Get help understanding
+                scenarios, reporting steps, and key security concepts.
+            </p>
+            <button onclick="location.href='faq.html'">View FAQ</button>
+        </div>
+
+    </div>
+
+</main>
+
+<footer>
+    <div class="copyright">© 2026 Hooked on Security</div>
+    <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Contact Support</a>
+    </div>
+</footer>
+
+</body>
+</html>

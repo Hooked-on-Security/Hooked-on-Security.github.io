@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Lesson - Hooked on Security</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0; 
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+        :root {
+            --main-blue: #0A4C6A;
+            --main-yellow: #ffcc00;
+            --main-text: #333333;
+            --border-light: #eeeeee;
+            --banner-blue: #165f80;
+            --muted-text: #666666;
+        }
+
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 5%;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { 
+            font-size: clamp(20px, 2.5vh, 24px);
+            font-weight: bold;
+            color: var(--main-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img { 
+            height: clamp(28px, 4vh, 36px); 
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.3vw;
+            align-items: center;
+            font-weight: 500;
+            color: var(--main-blue);
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .nav-links a, #continue-btn {
+            padding: 1vh 1.0vw;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover { opacity: 0.7; }
+
+        .btn-active {
+            background-color: var(--main-yellow);
+            color: var(--main-blue);
+            font-weight: bold;
+            font-size: clamp(14px, 1.8vh, 16px);
+        }
+
+        .btn-active:hover {
+            background-color: #e6b800;
+            opacity: 1 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 8px;
+            min-width: 220px;
+            padding: 8px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 200;
+        }
+
+        .dropdown-content a {
+            color: var(--main-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: clamp(14px, 1.8vh, 16px);
+            display: block;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--main-yellow);
+            font-weight: bold;
+            opacity: 1 !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ── BANNER ── */
+        .banner {
+            flex-shrink: 0;
+            background: var(--banner-blue);
+            color: #ffffff;
+            text-align: center;
+            min-height: 20vh;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner h1 {
+            font-size: clamp(24px, 3.5vh, 32px);
+            margin-bottom: 1.2vh;
+        }
+
+        .banner p {
+            font-size: clamp(15px, 2vh, 18px);
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 12.5%;
+            height: 8px;
+            opacity: 0.7;
+            flex-shrink: 0;
+            background: linear-gradient(to right, var(--main-blue), var(--main-yellow));
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .lesson-header {
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        .lesson-header h2 {
+            color: var(--main-blue);
+            font-size: clamp(26px, 1.6vh, 30px);
+            margin-bottom: 8px;
+        }
+
+        .lesson-header p {
+            color: var(--muted-text);
+            font-size: clamp(15px, 1.6vh, 18px);
+        }
+
+        .lesson-block {
+            background-color: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .lesson-block h3 {
+            color: var(--main-blue);
+            font-size: clamp(22px, 1.6vh, 26px);
+            margin-bottom: 12px;
+        }
+
+        .lesson-block p {
+            color: var(--muted-text);
+            margin-bottom: 12px;
+        }
+
+        .lesson-block ul {
+            color: var(--muted-text);
+            padding-left: 22px;
+            line-height: 1.7;
+        }
+
+        .info {
+            background-color: #eaf5f8;
+            font-weight: bold;
+            color: var(--main-blue);
+            border-radius: 6px;
+            margin-top: 14px;
+            padding: 14px 10px;
+        }
+
+        .disclaimer {
+            background-color: #f6e59d;
+            font-size: clamp(13px, 1.8vh, 15px);
+            color: #4a4a4a;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            text-align: left;
+            padding: 0.6vh 5%;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: var(--main-blue);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 5%;
+            font-size: clamp(13px, 1.8vh, 15px);
+        }
+
+        .footer-links { display: flex; gap: 2vw; }
+        .footer-links a:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body onload="initialize()">
+    <header>
+        <div class="logo">
+			<img src="./assets/logo.png" alt="Hooked on Security Logo">
+			Hooked on Security
+		</div>
+
+		<div class="nav-links">
+			<a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="training.html" class="btn-active">Training</a>
+                <div class="dropdown-content">
+                    <a href="phishing-red-flags.html">Phishing Red Flags</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+
+            <a href="feedback.html">Feedback</a>
+            <a href="about.html">About Us</a>
+        </div> 
+    </header>
+
+    <main>
+        <section class="banner">
+            <h1>Interactive Phishing Scenario</h1>
+            <p>Work through realistic Outlook and Teams situations, identify red flags, and practice making safer security decisions.</p>
+        </section>
+
+        <div class="progress-bar"></div>
+        
+        <div class="content-wrapper">
+            <div class="lesson-header">
+                <h2>Hooked on Security Phishing at Drexel: Pause, Verify, Report</h2>
+                <p>Prepare Drexel Faculty to make decisions in upcoming simulations.</p>
+            </div>
+
+            <div class="lesson-block" id="block1">
+                <h3>What is Phishing?</h3>
+                <p>Phishing is when someone pretends to be a trusted person or service to get you to click a link, sign in, or share information.</p>
+                <p>The goal is often to:</p>
+                <ul>
+                    <li>capture login credentials</li>
+                    <li>access email or files</li>
+                    <li>send messages as you</li>
+                </ul>
+            </div>
+
+            <div class="lesson-block" id="block2">
+                <h3>Where Phishing Appears at Drexel</h3>
+                <p>Phishing does not only happen in email. It can appear in:</p>
+                <ul>
+                    <li>Outlook messages</li>
+                    <li>Microsoft Teams chats</li>
+                    <li>shared files and SharePoint links</li>
+                </ul>
+                <div class="info">💡 If you can click on Microsoft 365, it can be imitated.</div>
+            </div>
+
+            <div class="lesson-block" id="block3">
+                <h3>The 10-Second Check</h3>
+                <p>Before clicking:</p>
+                <ul>
+                    <li>Check the sender, look beyond the display name</li>
+                    <li>Check the request, urgency and pressure are common tactics</li>
+                    <li>Check the link or file, look at where it leads before opening</li>
+                    <li>Check the context, does this match your workflow?</li>
+                </ul>
+            </div>
+
+            <div class="lesson-block" id="block4">
+                <h3>Safe Actions</h3>
+                <ul>
+                    <li>Verify using a trusted contact</li>
+                    <li>Report the message</li>
+                    <li>Avoid clicking until confirming</li>
+                </ul>
+                <div class="info">💡 If you already clicked: close it and report immediately.</div>
+            </div>
+
+            <div>
+                <button id="continue-btn" class="btn-active">Continue</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This training contains simulated phishing scenarios created for educational purposes and is not affiliated with or endorsed by Drexel University.
+    </div>
+
+    <script src="./mini-lesson.js"></script>
+
+    <footer>
+        <div class="copyright">© 2026 Hooked on Security</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+    </footer>
+
+    <script src="./session.js"></script>
+
+</body>
+</html>

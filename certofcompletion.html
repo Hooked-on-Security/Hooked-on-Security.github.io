@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Scenario - Hooked on Security</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --main-blue: #0A4C6A;
+      --main-yellow: #ffcc00;
+      --main-text: #333333;
+      --border-light: #eeeeee;
+      --banner-blue: #165f80;
+      --muted-text: #666666;
+      --soft-bg: #f8fbfc;
+    }
+
+    body {
+      font-family: sans-serif;
+      color: #333;
+      background-color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.2s;
+    }
+
+    header {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2vh 5%;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .logo {
+      font-size: clamp(20px, 2.5vh, 24px);
+      font-weight: bold;
+      color: var(--main-blue);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img {
+      height: clamp(28px, 4vh, 36px);
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.3vw;
+      align-items: center;
+      font-weight: 500;
+      color: var(--main-blue);
+      font-size: clamp(14px, 1.8vh, 16px);
+    }
+
+    .nav-links a,
+    .btn {
+      padding: 1vh 1vw;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.7;
+    }
+
+    .btn-active {
+      background-color: var(--main-yellow);
+      color: var(--main-blue);
+      font-weight: bold;
+      font-size: clamp(14px, 1.8vh, 16px);
+    }
+
+    .btn-active:hover {
+      background-color: #e6b800;
+      opacity: 1 !important;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      color: var(--main-blue);
+      font-weight: bold;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 8px;
+      min-width: 220px;
+      padding: 8px;
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 6px;
+      z-index: 200;
+    }
+
+    .dropdown-content a {
+      color: var(--main-blue);
+      padding: 12px 14px;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-content a:hover {
+      background-color: var(--main-yellow);
+      font-weight: bold;
+      opacity: 1 !important;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .banner {
+      flex-shrink: 0;
+      background: var(--banner-blue);
+      color: #ffffff;
+      text-align: center;
+      min-height: 20vh;
+      padding: 0 5%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .banner h1 {
+      font-size: clamp(24px, 3.5vh, 32px);
+      margin-bottom: 1.2vh;
+    }
+
+    .banner p {
+      font-size: clamp(15px, 2vh, 18px);
+      max-width: 1000px;
+      line-height: 1.6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      opacity: 0.7;
+      background: linear-gradient(to right, var(--main-blue), var(--main-yellow));
+    } 
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .content-wrapper {
+      width: 90%;
+      max-width: 1000px;
+      margin: 30px auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .lesson-header {
+      margin-top: 20px;
+    }
+
+    .lesson-header h2 {
+      color: var(--main-blue);
+      font-size: clamp(26px, 1.6vh, 30px);
+      margin-bottom: 8px;
+    }
+
+    .lesson-header p {
+      color: var(--muted-text);
+      font-size: clamp(15px, 1.6vh, 18px);
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .panel h3 {
+      color: var(--main-blue);
+      margin-bottom: 12px;
+      font-size: 24px;
+    }
+
+    .panel p {
+      color: var(--muted-text);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .completion-list {
+      padding-left: 20px;
+      color: var(--muted-text);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .completion-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .name-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+      margin-bottom: 16px;
+    }
+
+    .name-row input {
+      flex: 1;
+      min-width: 240px;
+      padding: 12px 14px;
+      border: 1px solid #d7d7d7;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .cert-wrap {
+      margin-top: 10px;
+    }
+
+    .certificate {
+      background: linear-gradient(180deg, #ffffff 0%, #f9fcfd 100%);
+      border: 2px solid #dfecef;
+      border-radius: 18px;
+      padding: 34px;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+    }
+
+    .cert-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      border-bottom: 2px solid #eef4f6;
+      padding-bottom: 18px;
+      margin-bottom: 26px;
+    }
+
+    .cert-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cert-brand img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+    }
+
+    .cert-brand .name {
+      color: var(--main-blue);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .cert-title {
+      color: var(--main-blue);
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .cert-sub {
+      color: var(--muted-text);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .cert-name {
+      margin-top: 16px;
+      margin-bottom: 16px;
+      color: #1d2d35;
+      font-size: 34px;
+      font-weight: 800;
+      border-bottom: 2px solid var(--main-yellow);
+      display: inline-block;
+      padding-bottom: 6px;
+    }
+
+    .cert-lines {
+      color: #4f5f66;
+      font-size: 17px;
+      line-height: 1.8;
+      margin-top: 24px;
+      margin-bottom: 28px;
+      max-width: 800px;
+    }
+
+    .cert-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 2px solid #eef4f6;
+      padding-top: 16px;
+      color: var(--main-blue);
+      font-weight: bold;
+    }
+
+    .disclaimer {
+      background-color: #f6e59d;
+      font-size: clamp(13px, 1.8vh, 15px);
+      color: #4a4a4a;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+      text-align: left;
+      padding: 0.6vh 5%;
+    }
+
+    footer {
+      flex-shrink: 0;
+      background-color: var(--main-blue);
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      padding: 2vh 5%;
+      font-size: clamp(13px, 1.8vh, 15px);
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2vw;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      .cert-head,
+      .cert-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cert-title {
+        font-size: 24px;
+      }
+
+      .cert-name {
+        font-size: 28px;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 0.6in;
+      }
+
+      body * {
+        visibility: hidden !important;
+      }
+
+      #printArea,
+      #printArea * {
+        visibility: visible !important;
+      }
+
+      #printArea {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .certificate {
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="./assets/logo.png" alt="Hooked on Security Logo" />
+      Hooked on Security
+    </div>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <a href="training.html" class="btn-active">Training</a>
+        <div class="dropdown-content">
+          <a href="phishing-red-flags.html">Phishing Red Flags</a>
+          <a href="faq.html">FAQ</a>
+        </div>
+      </div>
+      <a href="feedback.html">Feedback</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </header>
+
+  <section class="banner">
+    <h1>Interactive Phishing Scenario</h1>
+    <p>
+      Work through realistic Outlook and Teams situations, identify red flags,
+      and practice making safer security decisions.
+    </p>
+  </section>
+
+  <!-- <div class="progress-bar"></div> -->
+
+  <main>
+    <div class="content-wrapper">
+      <div class="lesson-header">
+        <h2>Hooked on Security Phishing at Drexel</h2>
+        <p>Complete the training and generate a certificate of completion.</p>
+      </div>
+
+      <section class="panel">
+        <h3>Training Completion</h3>
+        <p>
+          Once the learner finishes the required activities, they can enter
+          their name and generate a printable certificate.
+        </p>
+
+        <ul class="completion-list" id="completedList"></ul>
+
+        <div class="name-row">
+          <input
+            type="text"
+            id="learnerName"
+            placeholder="Enter learner name"
+            maxlength="80"
+          />
+          <button class="btn btn-active" id="generateCertBtn" onclick="final()">Generate Certificate</button>
+          <button class="btn btn-secondary" id="printCertBtn" type="button">Print Certificate</button>
+        </div>
+
+        <div id="completionMount"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This training contains simulated phishing
+    scenarios created for educational purposes and is not affiliated with or
+    endorsed by Drexel University.
+  </div>
+
+  <footer>
+    <div class="copyright">© 2026 Hooked on Security</div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Contact Support</a>
+    </div>
+  </footer>
+
+  <script>
+    const state = {
+      learnerName: "",
+      certGenerated: false
+    };
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (match) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        };
+        return map[match];
+      });
+    }
+
+    function todayString() {
+      return new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function renderCompletion() {
+      const completed = [
+        "Mini Lesson: Phishing Basics",
+        "Interactive Outlook Scenario",
+        "Knowledge Check 1",
+        "Interactive Teams Scenario",
+        "Knowledge Check 2"
+      ];
+
+      const listHtml = completed
+        .map(item => `<li>${escapeHtml(item)}</li>`)
+        .join("");
+
+      document.getElementById("completedList").innerHTML = listHtml;
+
+      const certHtml = state.certGenerated
+        ? `
+          <div id="printArea" class="cert-wrap">
+            <div class="certificate">
+              <div class="cert-head">
+                <div class="cert-brand">
+                  <img src="./assets/logo.png" alt="Hooked on Security logo" />
+                  <div>
+                    <div class="name">Hooked on Security</div>
+                    <div style="color: var(--muted-text); font-weight: bold; font-size: 13px;">
+                      Interactive Phishing Awareness Training
+                    </div>
+                  </div>
+                </div>
+                <div style="text-align:right;">
+                  <div class="cert-title">Certificate of Completion</div>
+                  <div class="cert-sub">${todayString()}</div>
+                </div>
+              </div>
+
+              <div style="color: var(--muted-text); font-weight: bold; margin-top: 28px;">This certifies that</div>
+              <div class="cert-name">${escapeHtml(state.learnerName || "Learner")}</div>
+              <div class="cert-lines">
+                has successfully completed the Hooked on Security training module
+                featuring interactive Outlook and Teams phishing simulations,
+                including knowledge assessments.
+              </div>
+
+              <div class="cert-footer">
+                <div>Issued by: Hooked on Security</div>
+                <div>Pause • Verify • Report</div>
+              </div>
+            </div>
+          </div>
+        `
+        : "";
+
+      document.getElementById("completionMount").innerHTML = certHtml;
+    }
+
+    document.getElementById("learnerName").addEventListener("input", function (e) {
+      state.learnerName = e.target.value;
+    });
+
+    document.getElementById("generateCertBtn").addEventListener("click", function () {
+      state.learnerName = document.getElementById("learnerName").value.trim();
+      state.certGenerated = true;
+      renderCompletion();
+    });
+
+    document.getElementById("printCertBtn").addEventListener("click", function () {
+      if (!state.certGenerated) {
+        state.learnerName = document.getElementById("learnerName").value.trim();
+        state.certGenerated = true;
+        renderCompletion();
+      }
+      window.print();
+    });
+
+    renderCompletion();
+  </script>
+
+  <script src="session.js"></script>
+
+</body>
+</html>
